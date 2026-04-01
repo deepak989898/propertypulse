@@ -6,7 +6,9 @@ export function proxy(request: NextRequest) {
 
   const role = request.cookies.get("role")?.value;
   if (role !== "admin") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const login = new URL("/login", request.url);
+    login.searchParams.set("redirect", "/admin");
+    return NextResponse.redirect(login);
   }
   return NextResponse.next();
 }

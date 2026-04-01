@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NavbarAuth from "@/components/navbar-auth";
 
 export default function Navbar() {
   return (
@@ -12,9 +13,7 @@ export default function Navbar() {
           className="glass rounded-xl px-4 py-2 w-full md:w-96 text-sm text-dark placeholder:text-dark/45 outline-none"
         />
         <div className="flex items-center gap-3 text-sm text-dark/90">
-          <Link href="/dashboard" className="hover:text-primary transition-colors">
-            Login/Register
-          </Link>
+          <NavbarAuth />
           <Link href="/post-property" className="rounded-xl bg-primary px-4 py-2 font-medium text-light">
             Post Property
           </Link>
