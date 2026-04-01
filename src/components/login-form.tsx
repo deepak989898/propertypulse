@@ -6,9 +6,11 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  type User,
 } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -34,13 +36,28 @@ export default function LoginForm() {
     }
   }, [redirect, router]);
 
+  const routeAfterAuth = useCallback(
+    async (user: User) => {
+      if (db) {
+        const snap = await getDoc(doc(db, "admins", user.uid));
+        if (snap.exists()) {
+          router.replace("/admin");
+          router.refresh();
+          return;
+        }
+      }
+      safeRedirect();
+    },
+    [router, safeRedirect],
+  );
+
   useEffect(() => {
     if (!isFirebaseConfigured || !auth) return;
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) safeRedirect();
+      if (user) void routeAfterAuth(user);
     });
     return () => unsub();
-  }, [safeRedirect]);
+  }, [routeAfterAuth]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,12 +68,11 @@ export default function LoginForm() {
     }
     setLoading(true);
     try {
-      if (mode === "register") {
-        await createUserWithEmailAndPassword(auth, email.trim(), password);
-      } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
-      }
-      safeRedirect();
+      const cred =
+        mode === "register"
+          ? await createUserWithEmailAndPassword(auth, email.trim(), password)
+          : await signInWithEmailAndPassword(auth, email.trim(), password);
+      await routeAfterAuth(cred.user);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong.";
       setError(message);

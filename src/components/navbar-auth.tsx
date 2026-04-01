@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 
 export default function NavbarAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -14,8 +16,14 @@ export default function NavbarAuth() {
       queueMicrotask(() => setReady(true));
       return;
     }
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
+      if (u && db) {
+        const snap = await getDoc(doc(db, "admins", u.uid));
+        setIsAdmin(snap.exists());
+      } else {
+        setIsAdmin(false);
+      }
       setReady(true);
     });
     return () => unsub();
@@ -39,9 +47,15 @@ export default function NavbarAuth() {
         <span className="text-dark/60 max-w-[140px] truncate text-xs hidden sm:inline" title={user.email ?? ""}>
           {user.email}
         </span>
-        <Link href="/dashboard" className="hover:text-primary transition-colors">
-          Dashboard
-        </Link>
+        {isAdmin ? (
+          <Link href="/admin" className="font-semibold text-primary hover:underline">
+            Admin
+          </Link>
+        ) : (
+          <Link href="/dashboard" className="hover:text-primary transition-colors">
+            Dashboard
+          </Link>
+        )}
         <button
           type="button"
           onClick={() => {

@@ -29,6 +29,22 @@ export interface Lead {
   createdAt: string;
 }
 
+export type PropertySentiment = "like" | "dislike" | "none";
+
+export interface PropertyInterestPayload {
+  propertyId: string;
+  propertyTitle: string;
+  name: string;
+  phone: string;
+  budget: number | null;
+  purchaseTimeline: string;
+  message: string;
+  sentiment: PropertySentiment;
+  viewerUid: string | null;
+  viewerEmail: string | null;
+  createdAt: unknown;
+}
+
 export interface BlogPost {
   id: string;
   title: string;
