@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PropertyPulse
 
-## Getting Started
+Modern full-stack real estate platform for buying, selling, and renting in Orai, Uttar Pradesh.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js App Router + Tailwind CSS
+- Framer Motion + React Three Fiber + Drei
+- Firebase (Auth, Firestore, Storage) + Firebase Admin SDK
+- Razorpay-ready API hooks
+- Vercel deployment ready
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm install`
+- copy `.env.example` to `.env.local`
+- `npm run dev`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Routes
 
-## Learn More
+- `/` Homepage + 3D hero section
+- `/properties` Listing page
+- `/properties/[id]` Property detail + lead form
+- `/post-property` Post property
+- `/blog` Blog + SEO content pages
+- `/dashboard` User panel
+- `/admin` Admin panel
 
-To learn more about Next.js, take a look at the following resources:
+## API routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `POST /api/leads`
+- `POST /api/subscriptions`
+- `POST /api/properties/post`
+- `POST /api/admin/approve-property`
+- `POST /api/blog/post`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Security and SEO
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Admin route protection scaffold via `src/proxy.ts`
+- Firebase rules files included (`firestore.rules`, `storage.rules`)
+- SEO-ready metadata, sitemap, robots, and schema markup
